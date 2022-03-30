@@ -53,11 +53,9 @@ class Controller {
     async editUser(req, res) {
         try {
             const { id } = req.params;
-            const { data } = req.body;
+            const data = req.body;
 
-            console.log('id: ', id);
-            console.log('data: ', data);
-            const user = await Account.findOneAndUpdate({ id }, { data }, { new: true })
+            const user = await Account.findOneAndUpdate({ id }, data, { new: true })
             res.json("User was edited")
         }
         catch (e) {

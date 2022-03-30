@@ -1,19 +1,21 @@
 import axios from "axios";
 
 
-const url = "http://localhost:4000"
+const url = "http://localhost:3001"
+
+
 
 
 export const getUsers = (page, callback) => {
-    axios({
-        method: "GET",
-        url: `${url}/account/${page}`
-    }).then((res) => {
-        callback(res.data)
-    }).catch((err) => {
-        console.log(err);
-        callback(false)
-    })
+    const usersOnPage = 4;
+    return axios.get(`${url}/account?_limit=${usersOnPage}&_page=${page}`)
+        .then(res => {
+            callback(res.data)
+        })
+        .catch(error => {
+            callback(false, error);
+            console.log("erorr getUsers", error);
+        });
 }
 export const getAllUsers = (callback) => {
     return axios.get(`${url}/account`)
@@ -25,29 +27,6 @@ export const getAllUsers = (callback) => {
             console.log("erorr getUsers", error);
         });
 }
-
-export const deleteUser = (email, callback) =>
-    axios({
-        method: "DELETE",
-        url: `${url}/account/${email}`
-    }).then((res) => {
-        callback("Пользователь успешно удалён")
-    }).catch(err => {
-        console.log("Ошибка удаления пользователя");
-    })
-
-export const editUser = (data, id, callback) =>
-    axios({
-        method: "POST",
-        data,
-        url: `${url}/account/${id}`
-    }).then((res) => {
-        callback("Пользователь успешно изменен")
-    }).catch(err => {
-        console.log("Ошибка изменения пользователя");
-    })
-
-
 
 //PUT DETELE НЕОБХОДИМ /ID 
 export const sendNewContact = (user, contact, globalId, callback) =>
@@ -76,6 +55,16 @@ export const registerContact = (user, callback) =>
     })
 
 
+
+export const deleteUser = (email) =>
+    axios({
+        method: "DELETE",
+        url: `${url}/account?email=${email}`
+    }).then((res) => {
+        console.log("сервер удалил: ", res);
+    }).catch(err => {
+        console.log("Erorr: ", err);
+    })
 
 export const changeContact = (user, contacts, id, globalId, callback) => {
     return axios({

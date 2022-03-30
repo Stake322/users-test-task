@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Segment, Table, Pagination } from 'semantic-ui-react'
-import AddContact from '../Components/AddContact'
-import EditContact from '../Components/EditContact'
+import CreateUser from '../Components/CreateUser'
 import TableHeader from '../Components/TableHeader'
 import { getUsers, deleteUser, getAllUsers, editUser } from '../api'
 import ModalWindow from '../Components/Modal'
+import EditUser from '../Components/EditUser'
 const MainPage = () => {
     const [login, setLogin] = useState();
     const [data, setData] = useState();
     const [users, setUsers] = useState([])
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
-    const [valueId, setValueId] = useState();
     //placeholder
-    const [placeHolder, setPlaceHolder] = useState("");
     //
     const [edit, setEdit] = useState(false)
+    const [create, setCreate] = useState(false)
     const [input, setInput] = useState()
     const [open, setOpen] = useState(false)
     const [emailDelete, setEmailDelete] = useState(null);
 
-    const styleSegments = { width: "60%", marginLeft: "auto", marginRight: "auto" }
+    const styleSegments = { width: "100%", marginLeft: "auto", marginRight: "auto" }
+    //stateForEdit
+    const [editData, setEditData] = useState();
 
 
     useEffect(() => {
@@ -34,8 +35,19 @@ const MainPage = () => {
         })
     }, [page]);
 
-    const editUser = () => {
-
+    const onEditUser = (name, lastName, email, roles, organization, id) => {
+        setEditData({
+            name: name,
+            lastName: lastName,
+            email: email,
+            roles: roles,
+            organization: organization,
+            id: id
+        })
+        setEdit(true);
+        // editUser({ email: "valera322", id: 322 }, 7778, result => {
+        //     console.log(result);
+        // })
     }
 
     const renderUsers = () => {
@@ -54,7 +66,14 @@ const MainPage = () => {
                         </Table.Cell>
                         <Table.Cell>{value.organization.companyTitle}</Table.Cell>
                         <Table.Cell textAlign='center'><Button icon='download' /></Table.Cell>
-                        <Table.Cell textAlign='center'><Button icon='edit' onClick={editUser} />
+                        <Table.Cell textAlign='center'><Button icon='edit' onClick={e => onEditUser(
+                            value.user.name,
+                            value.user.lastName,
+                            value.email,
+                            value.roles,
+                            value.organization.companyTitle,
+                            value.id
+                        )} />
 
                             <Button icon='trash'
                                 onClick={(e) => { setOpen(true); setEmailDelete(value.email) }} />
@@ -71,11 +90,11 @@ const MainPage = () => {
     return (
         <>
             <ModalWindow open={open} setOpen={setOpen} emailDelete={emailDelete} />
+            <EditUser open={edit} setOpen={setEdit} editData={editData} />
             <Segment raised compact textAlign='center' style={styleSegments}>
                 <Table compact celled definition>
                     <TableHeader />
                     {renderUsers()}
-                    <AddContact data={data} login={login} />
 
 
                 </Table >
@@ -83,6 +102,7 @@ const MainPage = () => {
                     defaultActivePage={page}
                     totalPages={totalPages}
                     onPageChange={(e, { activePage }) => setPage(activePage - 1)} />
+                <CreateUser open={create} setOpen={setCreate} />
             </Segment>
         </>
 
