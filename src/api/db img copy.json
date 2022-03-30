@@ -1,0 +1,22 @@
+[
+    {
+        "id": 3,
+        "image": "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/social/pudge.jpg"
+    },
+    {
+        "id": 7,
+        "image": "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/social/sniper.jpg"
+    },
+    {
+        "id": 77,
+        "image": "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/social/warlock.jpg"
+    },
+    {
+        "id": 16,
+        "image": "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/social/riki.jpg"
+    },
+    {
+        "id": 80,
+        "image": "https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/heroes/social/zuus.jpg"
+    }
+]
