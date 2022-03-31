@@ -1,26 +1,14 @@
 const Organization = require('./models/Organization')
 const Account = require('./models/Account')
 const Arch = require('./models/Arch')
-const { validationResult } = require('express-validator')
 
 class Controller {
     //accounts
     async getAccounts(req, res) {
         try {
             const { page } = req.params;
-            // const newAccount = new Account({
-            //     id: 40,
-            //     email: 'aboba',
-            //     active: true,
-            //     user: { type: "Object", required: true },
-            //     roles: [{}],
-            //     organization: { type: "popObject", required: true }
-            // })
-            // console.log('newUsr', newAccount);
-            // newAccount.save()
             const perPage = 4;
             const accounts = await Account.find().limit(perPage).skip(perPage * page)
-            // console.log(accounts);
             res.json(accounts);
         }
         catch (e) {
@@ -63,6 +51,33 @@ class Controller {
             res.status(400).json({ message: 'EDIT Users error' })
         }
     }
+    async reginstaion(req, res) {
+        try {
+
+            const data = req.body;
+            const { id } = data;
+            const { admin } = req.params;
+            if (admin === 'admin') {
+                data.roles = [
+                    { "name": "ROLE_USER" },
+                    { "name": "ROLE_ADMIN" }
+                ]
+            } else {
+                data.roles = [{ "name": "ROLE_USER" }]
+            }
+
+            const candidate = await Account.findOne({ id })
+            if (candidate) return res.status(400).json({ message: "Пользователь с таким именем уже существует" })
+
+            const user = new Account(data);
+            await user.save()
+            return res.json({ message: "Пользователь успешно зарегистрирован" })
+        }
+        catch (e) {
+            console.log(e);
+            res.status(400).json({ message: 'Registration error' })
+        }
+    }
 
     //org
 
@@ -79,7 +94,8 @@ class Controller {
     //atch
     async getArch(req, res) {
         try {
-            const archs = await Arch.find()
+            const { id } = req.params;
+            const archs = await Arch.findOne({ id })
             res.json(archs)
         }
         catch (e) {

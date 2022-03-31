@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
     Header,
     Segment,
@@ -6,15 +6,23 @@ import {
 } from 'semantic-ui-react'
 
 
-function Popup(props) {
+function Popup({ open, info, setOpen }) {
+    useEffect(() => {
+        const closePopup = () => {
+            setOpen(false);
+        }
+        if (open) setTimeout(closePopup, 1500)
+
+        return () => clearTimeout(closePopup);
+    }, [open])
     return (
         <div>
-            <TransitionablePortal open={props.open}>
+            <TransitionablePortal open={open}>
                 <Segment
                     textAlign='center'
                     style={{ left: '80%', position: 'fixed', top: '0%', zIndex: 1000 }}
                 >
-                    <Header>{props.info}</Header>
+                    <Header>{info}</Header>
                 </Segment>
             </TransitionablePortal>
 

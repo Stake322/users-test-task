@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Header, Icon, Modal, Loader, Dimmer, Input, Form, Select, Dropdown } from 'semantic-ui-react'
+import { Button, Header, Icon, Modal, Loader, Dimmer, Input, Form, Select, Dropdown, Message } from 'semantic-ui-react'
 import { editUser } from '../api';
 
 
-const EditUser = ({ open, setOpen, editData }) => {
+const EditUser = ({ open, setOpen, editData, setOpenPop, setMsg }) => {
     const [active, setActive] = useState(false);
 
     const [firstName, setFirstName] = useState()
@@ -39,12 +39,14 @@ const EditUser = ({ open, setOpen, editData }) => {
         editUser(data, editData.id, result => {
             console.log(result);
         });
+
     }
 
     useEffect(() => {
         const loaderActive = () => {
             setActive(false);
-            window.location.reload()
+            setOpenPop(true);
+            setMsg("Пользователь был изменен")
         }
         if (active) setTimeout(loaderActive, 1000)
 
@@ -72,9 +74,10 @@ const EditUser = ({ open, setOpen, editData }) => {
                 <Header icon='edit outline' content='Редактирование пользователя' />
                 <Modal.Content>
                     <Form >
-                        <Form.Field>
+                        <Form.Field >
                             <label>Имя</label>
                             <input placeholder={firstName} onChange={e => setFirstName(e.target.value)} />
+
                         </Form.Field>
                         <Form.Field>
                             <label>Фамилия</label>

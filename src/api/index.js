@@ -47,46 +47,36 @@ export const editUser = (data, id, callback) =>
         console.log("Ошибка изменения пользователя");
     })
 
-
-
-//PUT DETELE НЕОБХОДИМ /ID 
-export const sendNewContact = (user, contact, globalId, callback) =>
-    axios({
-        method: "PUT",
-        data: { user, contacts: contact },
-        url: `${url}/users/${globalId}`
-    }).then((res) => {
-        callback(res)
-    }).catch(err => {
-        callback(false, err)
-    })
-
-
-
-
-export const registerContact = (user, callback) =>
-    axios({
-        method: "POST",
-        data: { user },
-        url: `${url}/users`
-    }).then((res) => {
-        callback(res)
-    }).catch(err => {
-        callback(false, err)
-    })
-
-
-
-export const changeContact = (user, contacts, id, globalId, callback) => {
+export const registration = (data, admin, callback) => {
     return axios({
-        method: "PUT",
-        data: { user, contacts },
-        url: `${url}/users/${globalId}`
+        method: "POST",
+        data: data,
+        url: url + '/auth/reg/' + admin,
     }).then((res) => {
-        res.data.contacts.map((value, index) => {
-            if (value.id === id) callback(value)
-        })
-    }).catch(err => {
-        callback(false, err)
+        callback(res.data.message)
+    }).catch((err) => {
+        console.log(err);
+        callback(false)
     })
 }
+export const getOrganizations = (callback) => {
+    return axios.get(`${url}/ogranization`)
+        .then(res => {
+            callback(res.data)
+        })
+        .catch(error => {
+            callback(false, error);
+            console.log("erorr getUsers", error);
+        });
+}
+export const getArch = (id, callback) => {
+    return axios.get(`${url}/screenshot/arch/${id}`)
+        .then(res => {
+            callback(res.data)
+        })
+        .catch(error => {
+            callback(false, error);
+            console.log("erorr getUsers", error);
+        });
+}
+

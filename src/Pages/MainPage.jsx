@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Segment, Table, Pagination } from 'semantic-ui-react'
+import { Button, Segment, Table, Pagination, Image } from 'semantic-ui-react'
 import CreateUser from '../Components/CreateUser'
 import TableHeader from '../Components/TableHeader'
-import { getUsers, deleteUser, getAllUsers, editUser } from '../api'
+import { getUsers, getAllUsers, getArch } from '../api'
 import ModalWindow from '../Components/Modal'
 import EditUser from '../Components/EditUser'
+import { saveAs } from 'file-saver'
+import Popup from '../Components/Popup'
 const MainPage = () => {
-    const [login, setLogin] = useState();
-    const [data, setData] = useState();
     const [users, setUsers] = useState([])
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
-    //placeholder
-    //
     const [edit, setEdit] = useState(false)
     const [create, setCreate] = useState(false)
-    const [input, setInput] = useState()
     const [open, setOpen] = useState(false)
     const [emailDelete, setEmailDelete] = useState(null);
-
+    const [openPop, setOpenPop] = useState(false);
+    const [msg, setMsg] = useState(false);
     const styleSegments = { width: "100%", marginLeft: "auto", marginRight: "auto" }
     //stateForEdit
     const [editData, setEditData] = useState();
-
 
     useEffect(() => {
         getUsers(page, result => {
@@ -45,10 +42,20 @@ const MainPage = () => {
             id: id
         })
         setEdit(true);
-        // editUser({ email: "valera322", id: 322 }, 7778, result => {
-        //     console.log(result);
-        // })
+
     }
+    const onDownload = (id) => {
+        getArch(id, res => {
+            saveAs(res.image, `image${id}.jpg`)
+            setOpenPop(true);
+            setMsg("Изображение успешно загрузилось")
+        })
+
+    };
+
+
+    //sort
+
 
     const renderUsers = () => {
         return (users !== undefined) ? users.map((value, index) => {
@@ -65,7 +72,7 @@ const MainPage = () => {
                             {value.roles.map(role => <div key={role.name}> [{role.name}]</div>)}
                         </Table.Cell>
                         <Table.Cell>{value.organization.companyTitle}</Table.Cell>
-                        <Table.Cell textAlign='center'><Button icon='download' /></Table.Cell>
+                        <Table.Cell textAlign='center'><Button icon='download' onClick={e => onDownload(value.id)} /></Table.Cell>
                         <Table.Cell textAlign='center'><Button icon='edit' onClick={e => onEditUser(
                             value.user.name,
                             value.user.lastName,
@@ -74,7 +81,6 @@ const MainPage = () => {
                             value.organization.companyTitle,
                             value.id
                         )} />
-
                             <Button icon='trash'
                                 onClick={(e) => { setOpen(true); setEmailDelete(value.email) }} />
                         </Table.Cell>
@@ -85,24 +91,22 @@ const MainPage = () => {
         }) : <></>
     }
 
-
-
     return (
         <>
+            <Popup open={openPop} setOpen={setOpenPop} info={msg} />
             <ModalWindow open={open} setOpen={setOpen} emailDelete={emailDelete} />
-            <EditUser open={edit} setOpen={setEdit} editData={editData} />
+            <EditUser open={edit} setOpen={setEdit} editData={editData} setOpenPop={setOpenPop} setMsg={setMsg} />
             <Segment raised compact textAlign='center' style={styleSegments}>
-                <Table compact celled definition>
-                    <TableHeader />
+                <Table compact celled definition sortable >
+                    <TableHeader setUsers={setUsers} users={users} />
                     {renderUsers()}
-
-
                 </Table >
                 <Pagination
                     defaultActivePage={page}
                     totalPages={totalPages}
                     onPageChange={(e, { activePage }) => setPage(activePage - 1)} />
-                <CreateUser open={create} setOpen={setCreate} />
+                <CreateUser open={create} setOpen={setCreate} renderUsers={renderUsers} setOpenPop={setOpenPop} setMsg={setMsg} />
+
             </Segment>
         </>
 
