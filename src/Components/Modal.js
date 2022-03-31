@@ -11,9 +11,9 @@ const ModalWindow = ({ open, setOpen, emailDelete }) => {
     const onDelete = () => {
         setOpen(false)
         console.log(emailDelete);
-        // deleteUser(emailDelete, result => {
-        //     console.log(result);
-        // });
+        deleteUser(emailDelete, result => {
+            console.log(result);
+        });
         setActive(true)
 
 
